@@ -1,13 +1,16 @@
 import java.util.ArrayList;
 
 public class LS{
-    private int trails = 10000000;
+    private int trails = 10000000;// 試行回数
     private ArrayList<node> net = new ArrayList<node>();
     private Desire desire = new Desire();
     private Condition condition = new Condition();
     private Answer ans;
     private int count;
     private int hoge;
+    private int set;
+    private boolean s;
+    private boolean a;
     public LS(ArrayList<node> net,Desire d,Condition c){
         this.net = net;
         this.desire = d;
@@ -15,24 +18,43 @@ public class LS{
     }
 
     public void run(){
-        count = 0;
-        hoge = 0;
+        this.count = 0;
+        this.hoge = 0;
         Random_val r = new Random_val();
         for(int i=0;i<trails;i++){
             this.ans = new Answer();
+            this.set = this.condition.get_num();
+            this.s = false;
+            this.a = false;
             // A
             this.net.get(0).set_val(r.generate_randomVal(0.20));
             ans.add_Answer(this.net.get(0).get_name(), this.net.get(0).get_val());
             if(this.net.get(0).get_name()==this.desire.get_name()){
-                if(this.net.get(0).get_val()==this.desire.get_val()){
-                    count++;
-                }else{
-                    hoge++;
+                this.s = true;
+                if(set==0){
+                    if(this.net.get(0).get_val()==this.desire.get_val()){
+                        count++;
+                    }else{
+                        hoge++;
+                    }
+                    continue;
                 }
-                continue;
+                if(this.net.get(0).get_val()==this.desire.get_val()){
+                    this.a = true;
+                }
             }else{
                 if(search_condition(this.net.get(0))==true){
                     continue;
+                }else if(search_condition2(this.net.get(0))==true){
+                    set--;
+                    if(set==0&&this.s==true){
+                        if(this.a==true){
+                            count++;
+                        }else{
+                            hoge++;
+                        }
+                        break;
+                    }
                 }
             }
 
@@ -40,15 +62,31 @@ public class LS{
             this.net.get(1).set_val(r.generate_randomVal(0.85));
             ans.add_Answer(this.net.get(1).get_name(), this.net.get(1).get_val());
             if(this.net.get(1).get_name()==this.desire.get_name()){
-                if(this.net.get(1).get_val()==this.desire.get_val()){
-                    count++;
-                }else{
-                    hoge++;
+                this.s = true;
+                if(set==0){
+                    if(this.net.get(1).get_val()==this.desire.get_val()){
+                        count++;
+                    }else{
+                        hoge++;
+                    }
+                    continue;
                 }
-                continue;
+                if(this.net.get(1).get_val()==this.desire.get_val()){
+                    this.a = true;
+                }
             }else{
                 if(search_condition(this.net.get(1))==true){
                     continue;
+                }else if(search_condition2(this.net.get(1))==true){
+                    set--;
+                    if(set==0&&this.s==true){
+                        if(this.a==true){
+                            count++;
+                        }else{
+                            hoge++;
+                        }
+                        break;
+                    }
                 }
             }
 
@@ -64,15 +102,31 @@ public class LS{
             }
             this.ans.add_Answer(this.net.get(2).get_name(), this.net.get(2).get_val());
             if(this.net.get(2).get_name()==this.desire.get_name()){
+                this.s = true;
+                if(set==0){
+                    if(this.net.get(2).get_val()==this.desire.get_val()){
+                        count++;
+                    }else{
+                        hoge++;
+                    }
+                    continue;
+                } 
                 if(this.net.get(2).get_val()==this.desire.get_val()){
-                    count++;
-                }else{
-                    hoge++;
+                    this.a = true;
                 }
-                continue;
             }else{
                 if(search_condition(this.net.get(2))==true){
                     continue;
+                }else if(search_condition2(this.net.get(2))==true){
+                    set--;
+                    if(set==0&&this.s==true){
+                        if(this.a==true){
+                            count++;
+                        }else{
+                            hoge++;
+                        }
+                        break;
+                    }
                 }
             }
 
@@ -84,18 +138,33 @@ public class LS{
             }
             ans.add_Answer(this.net.get(3).get_name(), this.net.get(3).get_val());
             if(this.net.get(3).get_name()==this.desire.get_name()){
-                if(this.net.get(3).get_val()==this.desire.get_val()){
-                    count++;
-                }else{
-                    hoge++;
+                this.s = true;
+                if(set==0){
+                    if(this.net.get(3).get_val()==this.desire.get_val()){
+                        count++;
+                    }else{
+                        hoge++;
+                    }
+                    continue;
                 }
-                continue;
+                if(this.net.get(3).get_val()==this.desire.get_val()){
+                    this.a = true;
+                }
             }else{
                 if(search_condition(this.net.get(3))==true){
                     continue;
+                }else if(search_condition2(this.net.get(3))==true){
+                    set--;
+                    if(set==0&&this.s==true){
+                        if(this.a==true){
+                            count++;
+                        }else{
+                            hoge++;
+                        }
+                        continue;
+                    }
                 }
             }
-            show(ans,i);
         }
         System.out.println("試行回数: "+this.trails+", サンプル数"+(this.count+this.hoge));
         result_view();
@@ -104,19 +173,25 @@ public class LS{
     public boolean search_condition(node now){
         boolean found = false;
         for(int i=0;i<this.condition.get_num();i++){
-            if(now.get_name()==this.condition.get_name(i)&&now.get_val()!=this.condition.get_val(i)){
-                found = true;
+            if(now.get_name()==this.condition.get_name(i)){
+                if(now.get_val()!=this.condition.get_val(i)){
+                    found = true;
+                }
             }
         }
         return found;
     }
 
-    public void show(Answer ans,int j){
-        System.out.print(j+"回目: ");
-        for(int i=0;i<ans.get_num();i++){
-            System.out.print(ans.get_name(i)+" = "+ans.get_val(i)+"  ");
+    public boolean search_condition2(node now){
+        boolean found = false;
+        for(int i=0;i<this.condition.get_num();i++){
+            if(now.get_name()==this.condition.get_name(i)){
+                if(now.get_val()==this.condition.get_val(i)){
+                    found = true;
+                }
+            }
         }
-        System.out.println();
+        return found;
     }
 
     public void result_view(){
@@ -127,7 +202,7 @@ public class LS{
                 System.out.print(", ");
             }
         }
-        System.out.println(") = "+((double)this.count/(double)this.trails+"\n"));
+        System.out.println(") = "+((double)this.count/(double)(this.hoge+this.count)+"\n"));
     }
 
     public static void main(String[] args) {
@@ -147,12 +222,12 @@ public class LS{
         Bayesian_Network.add(B);
         Bayesian_Network.add(C);
         Bayesian_Network.add(D);
-        d_0.set_Desire(D, 1);
+        d_0.set_Desire(D, 3, 1);
         c_0.set_Condition(B, 1);
-        d_1.set_Desire(C, 0);
+        d_1.set_Desire(C, 2, 0);
         c_1.set_Condition(A, 0);
         c_1.set_Condition(D, 1);
-        d_2.set_Desire(D, 0);
+        d_2.set_Desire(D, 3, 0);
         c_2.set_Condition(A, 1);
         LS test_0 = new LS(Bayesian_Network,d_0,c_0);
         test_0.run();
